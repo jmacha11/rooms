@@ -1,0 +1,31 @@
+team_size=5
+team_floor=8
+meeting_start_time=10:30
+meeting_end_time=11:30
+available_start_time=false
+available_end_time=false
+while read line
+do
+	IFS=',' read -a room <<< $line
+	#echo "${room[1]}"
+	room_capacity=${room[1]}
+	
+	room_array_length="${#room[@]}"
+	for ((index=2; index<=$room_array_length-2; index++))
+    do
+      if [ "${room[index]}" = "$meeting_start_time" ]; then
+		 available_start_time=true
+	  fi
+    done
+	for ((index=3; index<=$room_array_length-1; index++))
+    do
+      if [ "${room[index]}" = "$meeting_end_time" ]; then
+		 available_end_time=true
+	  fi 
+    done
+	if [ $available_start_time = true ] && [ $available_end_time = true ]; then
+	  if [ $room_capacity -ge $team_size ]; then
+	    echo "${room[0]}"
+	  fi	
+    fi
+done<$1
